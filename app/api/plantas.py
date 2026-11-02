@@ -3,7 +3,6 @@ from typing import List
 
 router = APIRouter(prefix="/plantas", tags=["Plantas"])
 
-# Simulación temporal de datos (luego lo conectarás con SQLAlchemy)
 plantas_db = []
 
 @router.get("/", response_model=List[dict])

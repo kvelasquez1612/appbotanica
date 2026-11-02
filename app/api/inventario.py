@@ -3,7 +3,6 @@ from typing import List
 
 router = APIRouter(prefix="/inventario", tags=["Inventario y Lotes Agrícolas"])
 
-# Simulación temporal de datos para el inventario de la finca
 inventario_db = []
 
 @router.get("/", response_model=List[dict])

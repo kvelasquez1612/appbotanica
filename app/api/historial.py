@@ -3,7 +3,6 @@ from typing import List
 
 router = APIRouter(prefix="/historial", tags=["Historial de Diagnósticos"])
 
-# Simulación temporal de datos para el historial
 historial_db = []
 
 @router.get("/", response_model=List[dict])
