@@ -1,27 +1,13 @@
 from fastapi import APIRouter, HTTPException, status
-from typing import List, Optional
-from pydantic import BaseModel
+from typing import List
+from app.schemas.planta_schemas import PlantaCreate, PlantaResponse
 
 router = APIRouter(prefix="/plantas", tags=["Plantas"])
 
-# --- 1. SCHEMAS DE PYDANTIC PARA VALIDACIÓN ---
-class PlantaCreate(BaseModel):
-    nombre: str
-    descripcion: Optional[str] = None
-    precio: float
-    stock: int
-
-class PlantaResponse(PlantaCreate):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-# Simulación temporal de datos (luego lo conectarás con SQLAlchemy)
+# Simulación temporal de datos
 plantas_db = []
-id_counter = 1  # Contador para asignar IDs automáticos
+id_counter = 1
 
-# --- 2. ENDPOINT GET: Listar plantas (con filtro opcional) ---
 @router.get("/", response_model=List[PlantaResponse])
 def listar_plantas(busqueda: str = None):
     """GET /api/v1/plantas: Listar todas las especies de plantas"""
@@ -30,7 +16,6 @@ def listar_plantas(busqueda: str = None):
         return filtradas
     return plantas_db
 
-# --- 3. ENDPOINT GET POR ID: Obtener planta específica ---
 @router.get("/{id}", response_model=PlantaResponse)
 def obtener_planta(id: int):
     """GET /api/v1/plantas/{id}: Obtener la ficha técnica de una planta específica"""
@@ -39,17 +24,14 @@ def obtener_planta(id: int):
             return planta
     raise HTTPException(status_code=404, detail="Planta no encontrada")
 
-# --- 4. ENDPOINT POST: Registrar nueva planta ---
 @router.post("/", response_model=PlantaResponse, status_code=status.HTTP_201_CREATED)
 def crear_planta(planta: PlantaCreate):
     """POST /api/v1/plantas: Registrar una nueva especie vegetal"""
     global id_counter
     
-    # Convertir el modelo de Pydantic a diccionario y agregarle el ID
     nueva_planta = planta.model_dump()
     nueva_planta["id"] = id_counter
     
-    # Guardar en la base de datos simulada
     plantas_db.append(nueva_planta)
     id_counter += 1
     
